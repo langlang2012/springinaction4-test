@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="knight" class="mock.BraveKnight">
+        <constructor-arg ref="quest" />
+    </bean>
+
+    <bean id="quest" class="mock.SlayDragonQuest">
+        <constructor-arg value="#{T(System).out}" />
+    </bean>
+
+    <bean id="ministrel" class="aop.Minsrel">
+        <constructor-arg value="#{T(System).out}" />
+    </bean>
+
+    <aop:config>
+        <!-- 这里使用了aop配置命名空间把Minstrel bean声明为一个切面-->
+        <aop:aspect ref="ministrel">
+            <!-- 定义切点-->
+            <aop:pointcut id="embark" expression="execution(* *.embarkOnQuest(..))" />
+            <!-- 前置通知advice和后置通知-->
+            <aop:before method="singBeforeQuest" pointcut-ref="embark"/>
+            <aop:after method="singAfterQuest" pointcut-ref="embark"/>
+        </aop:aspect>
+    </aop:config>
+</beans>
